@@ -231,3 +231,16 @@ if let obj = object as? 协议名
 1.2:类型约束,在处理泛型时，有时需要加入一些条件才能处理,先找出相异处，再以T取代比如:<T:Equatable>(参数:T,array:[T]) ->T?
 以及:<T:Comparable>(参数:arr[T])
 1.3关联类型 typealias ItemType 
+
+
+
+tip:swift项目名就是个命名空间，所以不用import
+tip:使用KVC要给基本类型初始化赋值，不能设置成可选类型。不能给私有属性赋值，不能给没有初始化的属性赋值
+tip:使用KVC给没有的属性赋值要使用func setValue(… forUndefineKey)方法，并且不要实现父类方法就不会崩溃
+tip:swift使用运行时后需要free获取的各种列表，不然会内存泄漏
+tip:运行时获取不到可选的基本类型，必须初始化，获取不到私有属性（可获取ivar）
+tip:如果遇到可以选类型最好加上判断或者guard，for循环里使用guard let 配合contiune 便利下一个
+tip:修改plist 可以右键 SourceCode 
+tip:便利构造函数可能返回nil,便利构造函数作用是判断给你参数是否符合条件，以节省内存开销，给属性赋值要在self.init()之后，便利构造函数不能被重写或super
+tip:构造方法或者函数参数有默认值就可以任意组合
+tip:便利构造函数有点像OC里的工厂模式
