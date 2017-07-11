@@ -76,7 +76,7 @@ OC TIP
 ## 8
 可以通过***关联对象机制(runTime)***把两个对象联系在一起，定义关联对象时可指定内存管理语义，用以模仿定义属性时采用的“拥有关系”和”非拥有关系”.***只有在其他做法不可行时才应选用关联对象，因为这种做法通常会引入难于查找的bug***.
 
-> 获取关联:***`objc_getAssociatedObject(<id object> <const void *key>)`***<br>
+> 获取关联:****`objc_getAssociatedObject(<id object> <const void *key>)`****<br>
 设置关联:***`objc_setAssociatedObject(<id object>, <const void *key>, <id value>, <objc_AssociationPolicy policy>)`***<br>
      移除关联:***`objc_removeAssociatedObjects(<id object>)`***
 
