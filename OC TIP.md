@@ -60,8 +60,8 @@ OC TIP
 
 ## 7
 * `==`是比较两个***指针本身，而不是对象***，`isEqual`才是比较两个**对象**的<br>
-而[hash][]值比较两个对象，即便是返回同一个值，那么`isEqual`方法返回的值也不一定为真
-计算[hash][]码办法
+而[hash][id]值比较两个对象，即便是返回同一个值，那么`isEqual`方法返回的值也不一定为真
+计算[hash][id]码办法
 
 		- (NSUInteger)hash{
 		NSUInteger firstNameHash = [_firstName hash];
