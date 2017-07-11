@@ -60,8 +60,8 @@ OC TIP
 
 ## 7
 * `==`是比较两个***指针本身，而不是对象***，`isEqual`才是比较两个**对象**的<br>
-而[hash][id]值比较两个对象，即便是返回同一个值，那么`isEqual`方法返回的值也不一定为真
-计算[hash][id]码办法
+而[hash](http://www.jianshu.com/p/915356e280fc)值比较两个对象，即便是返回同一个值，那么`isEqual`方法返回的值也不一定为真
+计算[hash](http://www.jianshu.com/p/915356e280fc)码办法
 
 		- (NSUInteger)hash{
 		NSUInteger firstNameHash = [_firstName hash];
@@ -72,7 +72,6 @@ OC TIP
 这种做法既能保持高效又能使生成的hash码少于一定范围
 
 * NSException raise:@“” format@“” 是让程序抛出异常的方法
-[id]: http://www.jianshu.com/p/915356e280fc
 
 ## 8
 可以通过***关联对象机制(runTime)***把两个对象联系在一起，定义关联对象时可指定内存管理语义，用以模仿定义属性时采用的“拥有关系”和”非拥有关系”.***只有在其他做法不可行时才应选用关联对象，因为这种做法通常会引入难于查找的bug***.
