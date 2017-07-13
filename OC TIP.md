@@ -80,4 +80,10 @@ OC TIP
 设置关联:****`objc_setAssociatedObject(<id object>, <const void *key>, <id value>, <objc_AssociationPolicy policy>)`****<br>
      移除关联:****`objc_removeAssociatedObjects(<id object>)`****
 
-
+## 9
+理解`objc_msgSend`,首先`C`使用的是静态绑定，编译器就能确定运行时所对应的函数，而`OC`是动态的语言，函数要到运行时才会确定
+`OC`一个函数的原型 
+		
+	void objc_msgSend(id self, SEL cmd, ...)
+	
+发给某对象的全部消息都要由***动态消息派发***来处理，该系统会查出对应的方法，并执行其代码
