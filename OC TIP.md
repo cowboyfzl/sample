@@ -86,4 +86,120 @@ OC TIP
 		
 	void objc_msgSend(id self, SEL cmd, ...)
 	
-发给某对象的全部消息都要由***动态消息派发***来处理，该系统会查出对应的方法，并执行其代码
+发给某对象的全部消息都要由***动态消息派发***来处理，该系统会查出对应的方法，并执行其代码;消息由接收者，选择子及参数构成。给某个对象发送消息也就相当于在该对象上***调用方法***
+
+## 10
+在系统遇到无法解读的消息时就会启动消息转发。消息转发分为两大阶段:
+
+* 先征询接收者，所述的类看能否动态添加方法其名称叫做***动态方法解析***
+* ***完整的消息转发机制***第一步接收者看有没有其他对象能够处理这条消息。有则把这个消息转给那个对象，若没有***备援接收者***则启动完成的消息转发机制，第二步运行期系统会把消息有关的全部细节封装到`NSInvocation`对象中，再给接收者最后一次机会<br>
+
+####动态方法解析
+`+ (Bool)resolveInstanceMethod:(SEL)selector`如果是类方法则会调用`resolveClassMethod` 
+
+####例1<br>
+
+
+```
+@interface SomeClass : NSObject
+@property (assign, nonatomic) float objectTag;
+@end
+
+@implementation SomeClass
+@dynamic objectTag;  //声明为dynamic
+//添加setter实现
+void dynamicSetMethod(id self,SEL _cmd,float w){
+    printf("dynamicMethod-%s\n",[NSStringFromSelector(_cmd)
+                                 cStringUsingEncoding:NSUTF8StringEncoding]);
+    printf("%f\n",w);
+    objc_setAssociatedObject(self, ObjectTagKey, [NSNumber numberWithFloat:w], OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+}
+//添加getter实现
+void dynamicGetMethod(id self,SEL _cmd){
+    printf("dynamicMethod-%s\n",[NSStringFromSelector(_cmd)
+                                 cStringUsingEncoding:NSUTF8StringEncoding]);
+   [objc_getAssociatedObject(self, ObjectTagKey) floatValue];
+}
+
+//解析selector方法
++(BOOL) resolveInstanceMethod: (SEL) sel{
+
+    NSString *methodName=NSStringFromSelector(sel);
+    BOOL result=NO;
+    //动态的添加setter和getter方法
+    if ([methodName isEqualToString:@"setObjectTag:"]) {
+        class_addMethod([self class], sel, (IMP) dynamicSetMethod,
+                        "v@:f");
+        result=YES;  
+    }else if([methodName isEqualToString:@"objectTag"]){
+        class_addMethod([self class], sel, (IMP) dynamicGetMethod,
+                        "v@:f");
+        result=YES;
+    }
+    return result;
+}
+```
+
+####列2：<br>
+
+```
+@interface Person : NSObject
+
+@property (nonatomic, copy) NSString* name;
+@property (nonatomic, assign) NSUInteger age;
+
+@end
+
+@implementation Person
+
+@synthesize name = _name;
+@synthesize age = _age;
+//如果需要传参直接在参数列表后面添加就好了
+void dynamicAdditionMethodIMP(id self, SEL _cmd) {
+    NSLog(@"dynamicAdditionMethodIMP");
+}
+
++ (BOOL)resolveInstanceMethod:(SEL)name {
+    NSLog(@"resolveInstanceMethod: %@", NSStringFromSelector(name));
+    if (name == @selector(appendString:)) {
+        class_addMethod([self class], name, (IMP)dynamicAdditionMethodIMP, "v@:");
+        return YES;
+    }
+    return [super resolveInstanceMethod:name];
+}
+
++ (BOOL)resolveClassMethod:(SEL)name {
+    NSLog(@"resolveClassMethod %@", NSStringFromSelector(name));
+    return [super resolveClassMethod:name];
+}
+
+@end
+
+int main(int argc, const char * argv[]) {
+    @autoreleasepool {
+        id p = [[Person alloc] init];
+        [p appendString:@""];
+    }
+    return 0;
+}
+```
+
+
+看看class_addMethod函数：
+
+```
+BOOL class_addMethod(Class cls, SEL name, IMP imp, const char *types)
+参数说明：
+cls：添加方法的类
+name：selector名称
+imp：selector对应得具体实现
+types：一个定义该函数返回值类型和参数类型的字符串
+```
+
+#### 备援接收者
+
+` - (id) forwardingTargetForSelector:(SEL)selector`
+
+通过此方案我们可以组合来模拟出***多重继承***的某些特性
+
+
